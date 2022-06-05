@@ -78,6 +78,7 @@ def predataset():
     # df = df.reset_index()  # make sure indexes pair with number of rows
     for index, row in df.iterrows():
     	spl = row['path'].split(".")[0]
+    	spl = spl.split("/")[1]
     	name.append(spl + '.jpg')
     	# row['path'] = spl + '.jpg'
     	# print(name)
