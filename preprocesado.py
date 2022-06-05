@@ -2,11 +2,13 @@ from os import walk
 from shutil import copyfile
 from cv2 import cv2
 from pandas import pandas as pd
+import os
+
 # tipo = 'maligno'
 
 def preprocess():
     path = 'D:\\CIC\\Matematicas\\Object'
-
+    commitCount = 0
     # f = []
     # dirpath, dirnames, filenames = walk(path)
 
@@ -29,13 +31,38 @@ def preprocess():
             name_without_extension = name.split(".")[0]
             # print(name_without_extension)
             cv2.imwrite(dst+name_without_extension+'.jpg', image)
-
+            imageCount += 1
+            if imageCount==2000 or True:
+            	command = "git add ."
+            	print(command)
+            	p_ans = os.popen(command).read()
+            	command = 'git commit -m "Upload '+str(commitCount)+'"'
+            	print(command)
+            	p_ans = os.popen(command).read()
+            	commitCount += 1
+            	command = "git push"
+            	print(command)
+            	p_ans = os.popen(command).read()
+            	imageCount = 0
 
             # print('zoom = {} num={}'.format(zoom, num))
             # print(dst+zoom+'x\\maligno\\'+name)
             # copyfile(dirpath+'\\'+name, dst+'\\'+name)
 
             return
+
+        if imageCount>0:
+        	command = "git add ."
+        	print(command)
+        	# p_ans = os.popen(command).read()
+        	command = 'git commit -m "Upload '+str(commitCount)+'"'
+        	print(command)
+        	# p_ans = os.popen(command).read()
+        	commitCount += 1
+        	command = "git push"
+        	print(command)
+        	# p_ans = os.popen(command).read()
+        	imageCount = 0
 
 def preTrain():
     path = 'D:\\CIC\\Matematicas\\ReconocedorAlfabeto\\asl_alphabet_train\\asl_alphabet_train'
