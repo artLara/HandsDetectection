@@ -64,48 +64,39 @@ def preprocess():
         	p_ans = os.popen(command).read()
         	imageCount = 0
 
-def preTrain():
-    path = 'D:\\CIC\\Matematicas\\ReconocedorAlfabeto\\asl_alphabet_train\\asl_alphabet_train'
-    df = pd.DataFrame()
-    imageNames = []
-    classes = []
-    # f = []
-    # dirpath, dirnames, filenames = walk(path)
+def predataset():
+    path = 'D:\\CIC\\Matematicas\\HandsDetectection\\'
+    df = pd.read_csv(path+'dataset.csv')
+    
+    df['xmin'] = df['x']//2
+    df['ymin'] = df['y']//2
+    df['xmax'] = df['xmin'] + df['w']//2
+    df['ymax'] = df['ymin'] + df['h']//2
+    df["object_exist"].replace({1: "hand", 0: "not hand"}, inplace=True)
+    columns = list(df)
+    name=[]
+    # df = df.reset_index()  # make sure indexes pair with number of rows
+    for index, row in df.iterrows():
+    	spl = row['path'].split(".")[0]
+    	name.append(spl + '.jpg')
+    	# row['path'] = spl + '.jpg'
+    	# print(name)
+    	# break
 
-    print(path)
-    dst = 'D:\\CIC\\Matematicas\\ReconocedorAlfabeto\\vocales'
-    for (dirpath, dirnames, filenames) in walk(path):
-        # f.extend(filenames)
-        # for signal in dirnames:
-        
-        # print(filenames)
-        for (index, name) in enumerate(filenames):
-            # print(name) 
-            # elements = name.split('-')
-            # zoom = elements[3]
-            # num = elements[4]
-            # print(dirpath+'\\'+name)
-            # print('zoom = {} num={}'.format(zoom, num))
-            # print(dst+zoom+'x\\maligno\\'+name)
-            # copyfile(dirpath+'\\'+name, dst+'\\'+name)
-            # imageNames.append(name)
-            c = list(name)[0]
-            if c=='A' or c=='E' or c=='I' or c=='O' or c=='U':
-                # print(name, c)
-                imageNames.append(name)
-                classes.append(c)
-                # copyfile(dirpath+'\\'+name, dst+'\\'+name)
+    # for i in columns[0]:
+    # 	spl = i.split(".")[0]
+    # 	name.append(spl + '.jpg')
+    # 	print(i)
+    	# break
+    df['path'] = name
+    df.drop('x', inplace=True, axis=1)
+    df.drop('y', inplace=True, axis=1)
+    df.drop('w', inplace=True, axis=1)
+    df.drop('h', inplace=True, axis=1)
 
-
-
-            # gray = cv2.imread(dirpath+'\\'+name, 0)
-            # cv2.imwrite(dst+name, gray)
-            if index == 2000:
-                break
-
-    df['Name'] = imageNames
-    df['Class'] = classes
-    df.to_csv('D:\\CIC\\Matematicas\\ReconocedorAlfabeto\\vocales\\vocales2000.csv', index=False)
+    df.drop(df[df.object_exist == "not hand"].index, inplace=True)
+    df.rename(columns={'path': 'filename', 'object_exist': 'class'}, inplace=True)
+    df.to_csv(path+'just_hands.csv', index=False)
 # preTest()
-preprocess()
+predataset()
 print('Finish!!')
